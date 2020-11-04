@@ -7,7 +7,7 @@
 #include<boost/filesystem/path.hpp>
 #include"../common/common.h"
 using namespace std;
-string g_input_path  = "../data/input";
+string g_input_path  = "../data/input/";
 string g_output_path = "../data/tmp/raw_input";
 struct DocInfo
 {
@@ -41,11 +41,11 @@ bool parse_title(const string& html,DocInfo& doc_info)
    doc_info.title = html.substr(begin,end-begin);
    return true;
 }
-bool parse_url(const string& html,DocInfo& doc_info)
+bool parse_url(const string& file_name,DocInfo& doc_info)
 {
   string url_head = "https://www.boost.org/doc/libs/1_53_0/doc/";
-  string url_tail = "g_input_path";
-  doc_info.url+=url_head+url_tail;
+  string url_tail = file_name.substr(g_input_path.size());
+  doc_info.url=url_head+url_tail;
   return true;
 }
 bool parse_context(const string& html,DocInfo& doc_info)
@@ -92,16 +92,19 @@ bool parser(const string& file_path,DocInfo& doc_info)
       cout << "读取文件失败"<<endl;
       return false;
     }
+    //解析标题
     if(!parse_title(html,doc_info))
     {
      cout << "解析标题失败" <<endl;
      return false;
     }
-    if(!parse_url(html,doc_info))
+    //解析url
+    if(!parse_url(file_path,doc_info))
     {
      cout << "解析url 失败"  <<endl;
      return false;
     }
+    //解析正文
     if(!parse_context(html,doc_info))
     {
     cout << "解析正文失败" <<endl;

@@ -50,16 +50,13 @@ private:
 };
 
 
-
-
-
 //搜索模块
 class Searcher
 {
 public:
    bool search(const string& req,string& result);
-   void init(const string& input_path);
-   string GenrateDesc(string& content,string& word);
+   bool init(const string& input_path);
+   string GenrateDesc(string content,string& word);
 private:
    Index index;
 };

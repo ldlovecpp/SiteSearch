@@ -45,12 +45,18 @@ namespace searcher
        return false;
      }
      string line;
+     int idx=0;
      while(getline(file,line))
      {
      DocInfo* doc_info = Build_Doc_Info(line);
      //针对当前的行进行解析,解析成DocInfo的正排索引的形式
      Build_Inverted_DocInfo(*doc_info);
      //依据当前所生成的正排索引模型DocInfo,构建出倒排索引结构
+     if(idx%100==0)
+     {
+       cout << idx <<endl;
+     }
+     ++idx;
      }
      cout << "构建索引完成" <<endl;
      file.close();
@@ -110,7 +116,7 @@ namespace searcher
      weight.doc_id = doc_info.doc_id;
      weight.word = p->first;
      weight.weight = p->second.title_cnt*10+p->second.context_cnt;
-     vector<Weight>& inverted_list = inverted_index[p->first;
+     vector<Weight>& inverted_list = inverted_index[p->first];
      inverted_list.push_back(std::move(weight));
      ++p;
      }
@@ -123,12 +129,10 @@ namespace searcher
 
 
 
-
-
   //搜索模块
-  void Searcher::init(const string& input_path)
+  bool Searcher::init(const string& input_path)
   {
-     index.build(input_path);
+     return index.build(input_path);
   }
   bool Searcher::search(const string& req,string& res)
   {
@@ -149,7 +153,7 @@ namespace searcher
         all_token_result.insert(all_token_result.end(),inverted_list->begin(),inverted_list->end());
       }
       //排序
-      sort(tokens.begin(),tokens.end(),[](const Weight& w1,const Weight& w2) { return w1.weight>w2.weight;});
+      sort(all_token_result.begin(),all_token_result.end(),[](const Weight& w1,const Weight& w2) { return w1.weight>w2.weight;});
       //包装
       Json::Value results;
       for(auto weight : all_token_result) 
@@ -165,24 +169,30 @@ namespace searcher
       res=writer.write(results);
       return true;
   }
-  string Searcher:: GenrateDesc(string& context,string& word)
+  string Searcher:: GenrateDesc(string context,string& word)
   {
     int pos = context.find(word);
-    if(pos==std::npos)
+    int begin_pos =0 ;
+    if(pos==-1)
     {
       if(context.size()<160)
       {
         return context;
       }
-      else 
-      {
-        return context.substr(0,160);
-      }
+      return context.substr(0,160);
     }
-    int begin_pos=0;
-    if(pos-60>=0)
+    begin_pos = pos  <60 ? 0 : pos - 60;
+    if(begin_pos + 160  >= context.size())
     {
-      bebe
+      return context.substr(begin_pos);
     }
-  }
+    else 
+    {
+      string desc = context.substr(begin_pos,160);
+      desc[desc.size()-1] = '.';
+      desc[desc.size()-2] = '.';
+      desc[desc.size()-3] = '.';
+      return desc;
+    }
+} 
 };
