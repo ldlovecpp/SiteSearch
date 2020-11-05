@@ -43,7 +43,7 @@ bool parse_title(const string& html,DocInfo& doc_info)
 }
 bool parse_url(const string& file_name,DocInfo& doc_info)
 {
-  string url_head = "https://www.boost.org/doc/libs/1_53_0/doc/";
+  string url_head = "https://www.boost.org/doc/libs/1_53_0/doc/html/";
   string url_tail = file_name.substr(g_input_path.size());
   doc_info.url=url_head+url_tail;
   return true;
