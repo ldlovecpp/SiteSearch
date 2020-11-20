@@ -7,34 +7,60 @@
   <title>boost文档搜索</title>
   <style>
    *{
+    /*设置边距离*/
     margin:0;
     padding: 0;
    }
    html,
    body
      {
+     /*设置高度,把高度设置的和父级一样高,由于html标签已经是最上面的标签,因此事实上,这里设置的意思是和浏览器的窗口进行对齐的*/
      height:100%;
+     /*设置背景颜色*/
      background-color:#f3f3f3;
    }
+   body{
+    /*添加背景图片*/
+     background-image:url("mm.jpg");
+     /*让图片不要平铺*/
+     background-repeat : no-repeat;
+     /*设置图片的大小*/
+     background-size : cover;
+     /*设置背景图的位置*/
+     background-position : center center;
+   }
+   /*设置container的属性*/
    .container{
+     /*设置宽度*/
      width: 800px;
+     /*与父元素高度对其*/
      height: 100%;
+     /*水平居中*/
      margin:0 auto;
-     background-color :#fff;
+     /*背景颜色*/
+     background-color : rgbd(255,255,255,0.1);
+     /*当前内容多的时候,可以用鼠标滚动的方式查看下边的内容*/
      overflow : auto; 
    }
+   /*设置header的属性*/
    .header{
+     /*设置和父元素一样宽*/
      width: 100%;
      height: 50px;
    }
+   /*设置搜索框的属性*/
    .header input
      {
      width: 600px;
      height: 50px;
+     /*字体大小*/
      font-size: 22px;
+     /*文字左偏移量*/
      padding-left: 10px;
+     /*添加浮动,让搜索框和搜索按钮粘合在一起*/
      float: left;
    }
+   /*设置按钮的属性*/
    .header button{
      width: 100px;
      height: 50px;
@@ -46,14 +72,18 @@
    /*设置搜索结果样式*/
    .item{
      width: 100%;
+     /*设置顶部间隔*/
      margin-top: 20px;
    }
+   /*设置标题的属性*/
    .item a 
      {
+     /*将标题示为块属性*/
      display : block;
      width: 100%;
      height: 40px;
      font-size: 22px;
+    /*线条的粗*/
      line-height: 40px;
      font-weight: 700;
      text-decoration: none;
@@ -91,11 +121,17 @@
      </div>
      </div>
   </div>
+  <!--引入JavaScript JQuery库-->
   <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
    <script>
      function search(){
+       /*拿到input(搜索框的内容)*/
+       /*此处的$是JQuery里面的一个特殊对象,.header input表示拿到上面css 所创建的header input这个对话框 ,然后.val()代表的是拿到框中的内容*/
        let query=$(".header input").val();
+       /*在浏览器的控制台打印出输入的query,相当于C++中的cout<<query*/
        console.log("query: "+query);
+       /*此处的&仍然是JQuery中的一个特殊对象,ajax是一个函数,用于给服务器发送HTTP请求*/
+       /*ajax的参数Json对象*/
        $.ajax({
          type: "get",
          url: "searcher?query="+query,
@@ -105,20 +141,36 @@
        });
      }
     function buildResult(data){
+      /*这个data里面装的是服务器返回的内容,这里是一个Json数组*/
+      /*把这个Json数组按照上边的div整合到网页中就可以了*/
+
+
+      /*先获取result标签所对应的对象*/
       let result = $(".result");
+      /*清楚上次的搜索结果*/
       result.empty();
+      /*循环遍历json数组*/
       for(let item of data){
+        /*构建<a>标签*/
         let title = $("<a>",{
+          /*<a>标签要显示的内容*/
           text: item.title,
+          /*<a>标签要要跳转的url*/
           href: item.url,
+          /*打开一个新的网页显示跳转的网页*/
           target: "_blank",
         })
+        /*构建<p>标签*/
         let desc = $("<p>",{
+          /*<p>标签所要显示的内容*/
           text: item.desc,
         })
+        /*构建<i>标签*/
         let showUrl=$("<i>",{
+          /*<i>标签要显示的内容*/
           text: item.url,
         })
+        /*构建div标签*/
         let itemHtml=$("<div>",{
           class : "item",
         })
